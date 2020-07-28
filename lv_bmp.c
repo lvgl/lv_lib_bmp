@@ -90,7 +90,9 @@ static lv_res_t decoder_info(struct _lv_img_decoder * decoder, const void * src,
              lv_fs_close(f);
              header->always_zero = 0;
 #if LV_COLOR_DEPTH == 32
-             header->cf = b.bpp == 32 ? LV_IMG_CF_TRUE_COLOR_ALPHA : LV_IMG_CF_TRUE_COLOR;
+             uint16_t bpp;
+             memcpy(&bpp, header + 28, 2);
+             header->cf = bpp == 32 ? LV_IMG_CF_TRUE_COLOR_ALPHA : LV_IMG_CF_TRUE_COLOR;
 #else
              header->cf = LV_IMG_CF_TRUE_COLOR;
 #endif
