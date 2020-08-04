@@ -11,7 +11,7 @@ If you use the [lv_fs_if](https://github.com/lvgl/lv_fs_if) repository it's `new
 - Download or clone this repository
   - [Download from GitHub](https://github.com/littlevgl/lv_lib_bmp/archive/master.zip)
   - Clone: `git clone https://github.com/lvgl/lv_lib_bmp.git`
-- Include the library: `#include "lv_lib_lodepng/lv_bmp.h"`
+- Include the library: `#include "lv_lib_bmp/lv_bmp.h"`
 - Initalize the decocer with `lv_bmp_init()`
 - Test with the following code:
 ```c;
