@@ -4,6 +4,9 @@ Allow the use of BMP images in LVGL.
 This implementation uses [bmp-decoder](https://github.com/caj-johnson/bmp-decoder) library.
 The pixel are read on demand (not the whole image is loaded) so using BMP imgages requires very little RAM.
 
+Compatible with LVGL's `feat/new-fs-api` branch. 
+If you use the [lv_fs_if](https://github.com/lvgl/lv_fs_if) repository it's `new-api` branch should be used.
+
 ## Get started
 - Download or clone this repository
   - [Download from GitHub](https://github.com/littlevgl/lv_lib_bmp/archive/master.zip)
