@@ -12,14 +12,15 @@ If you use the [lv_fs_if](https://github.com/lvgl/lv_fs_if) repository it's `new
   - [Download from GitHub](https://github.com/littlevgl/lv_lib_bmp/archive/master.zip)
   - Clone: `git clone https://github.com/lvgl/lv_lib_bmp.git`
 - Include the library: `#include "lv_lib_bmp/lv_bmp.h"`
-- Initalize the decocer with `lv_bmp_init()`
+- Initalize the decocer with `lv_bmp_init();`
 - Test with the following code:
 ```c;
-    lv_obj_t * img = lv_img_create(lv_scr_act(), NULL);
+    lv_obj_t * img = lv_img_create(lv_scr_act());
     lv_img_set_src(img, "S/path/to/image.bmp");
 ```
 
 ## Limitations
-- BMP files can be loaded only from file. If you eant to store them in flash it's better to convert them to C array with [LVGL's image converter](https://lvgl.io/tools/imageconverter).
+- BMP files can be loaded only from file. If you want to store them in flash it's better to convert them to C array with [LVGL's image converter](https://lvgl.io/tools/imageconverter).
 - The BMP files color format needs to match with `LV_COLOR_DEPTH`. Use GIMP to save the image in the required format.
+  RGB888 and ARGB888 works with `LV_COLOR_DEPTH 32`
 - Palette is not supported.
