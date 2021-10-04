@@ -1,5 +1,7 @@
 # BMP decoder for LVGL
 
+**This repository is merged into the lvgl repository. See https://docs.lvgl.io/master/libs/bmp.html**
+
 Allow the use of BMP images in LVGL. 
 This implementation uses [bmp-decoder](https://github.com/caj-johnson/bmp-decoder) library.
 The pixel are read on demand (not the whole image is loaded) so using BMP imgages requires very little RAM.
