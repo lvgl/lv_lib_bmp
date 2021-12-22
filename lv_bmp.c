@@ -69,7 +69,7 @@ void lv_bmp_init(void)
  **********************/
 
 /**
- * Get info about a PNG image
+ * Get info about a BMP image
  * @param src can be file name or pointer to a C array
  * @param header store the info here
  * @return LV_RES_OK: no error; LV_RES_INV: can't get the info
@@ -84,15 +84,15 @@ static lv_res_t decoder_info(struct _lv_img_decoder * decoder, const void * src,
          const char * fn = src;
          if(!strcmp(&fn[strlen(fn) - 3], "bmp")) {              /*Check the extension*/
              /*Save the data in the header*/
-             lv_fs_file_t * f;
-             f = lv_fs_open(src, LV_FS_MODE_RD);
-             if(f == NULL) return LV_RES_INV;
+             lv_fs_file_t f;
+             lv_fs_res_t res = lv_fs_open(&f, src, LV_FS_MODE_RD);
+             if(res != LV_FS_RES_OK) return LV_RES_INV;
              uint8_t headers[54];
 
-             lv_fs_read(f, headers, 54, NULL);
+             lv_fs_read(&f, headers, 54, NULL);
              header->w = *(int *)(headers + 18);
              header->h = *(int *)(headers + 22);
-             lv_fs_close(f);
+             lv_fs_close(&f);
              header->always_zero = 0;
 #if LV_COLOR_DEPTH == 32
              uint16_t bpp;
@@ -115,7 +115,7 @@ static lv_res_t decoder_info(struct _lv_img_decoder * decoder, const void * src,
 
 
 /**
- * Open a PNG image and return the decided image
+ * Open a BMP image and return the decided image
  * @param src can be file name or pointer to a C array
  * @param style style of the image object (unused now but certain formats might use it)
  * @return pointer to the decoded image or  `LV_IMG_DECODER_OPEN_FAIL` if failed
@@ -125,20 +125,21 @@ static lv_res_t decoder_open(lv_img_decoder_t * decoder, lv_img_decoder_dsc_t * 
 
     (void) decoder; /*Unused*/
 
-    /*If it's a PNG file...*/
+    /*If it's a BMP file...*/
     if(dsc->src_type == LV_IMG_SRC_FILE) {
         const char * fn = dsc->src;
 
         if(strcmp(&fn[strlen(fn) - 3], "bmp")) return LV_RES_INV;       /*Check the extension*/
 
         bmp_dsc_t b;
+        lv_fs_file_t f;
         memset(&b, 0x00, sizeof(b));
-
-        b.f = lv_fs_open(dsc->src, LV_FS_MODE_RD);
-        if(b.f == NULL) return LV_RES_INV;
+        
+        lv_fs_res_t res = lv_fs_open(&f, dsc->src, LV_FS_MODE_RD);
+        if(res != LV_FS_RES_OK) return LV_RES_INV;
 
         uint8_t header[54];
-        lv_fs_read(b.f, header, 54, NULL);
+        lv_fs_read(&f, header, 54, NULL);
 
         if (0x42 != header[0] || 0x4d != header[1]) {
             return LV_RES_INV;
@@ -154,8 +155,14 @@ static lv_res_t decoder_open(lv_img_decoder_t * decoder, lv_img_decoder_dsc_t * 
         dsc->user_data = lv_mem_alloc(sizeof(bmp_dsc_t));
         LV_ASSERT_MEM(dsc->user_data);
         if(dsc->user_data == NULL) return LV_RES_INV;
-        memcpy(dsc->user_data, &b, sizeof(b));
 
+        b.f = lv_mem_alloc(sizeof(lv_fs_file_t));
+        LV_ASSERT_MEM(b.f);
+        if(b.f == NULL) return LV_RES_INV;
+        memcpy(b.f, &f, sizeof(lv_fs_file_t));
+
+        memcpy(dsc->user_data, &b, sizeof(b));
+        
         dsc->img_data = NULL;
         return LV_RES_OK;
     }
@@ -177,7 +184,7 @@ static lv_res_t decoder_read_line(struct _lv_img_decoder * decoder, struct _lv_i
     y = (b->px_height - 1) - y; /*BMP images are stored upside down*/
     uint32_t p = b->px_offset + b->row_size_bytes * y;
     p += x * (b->bpp / 8);
-    lv_fs_seek(b->f, p, LV_FS_SEEK_SET);
+    lv_fs_seek(b->f, p);
     lv_fs_read(b->f, buf, len * (b->bpp / 8), NULL);
 
 #if LV_COLOR_DEPTH == 32
@@ -206,6 +213,7 @@ static void decoder_close(lv_img_decoder_t * decoder, lv_img_decoder_dsc_t * dsc
     (void) decoder; /*Unused*/
     bmp_dsc_t * b = dsc->user_data;
     lv_fs_close(b->f);
+    lv_mem_free(b->f);
     lv_mem_free(dsc->user_data);
 
 }
