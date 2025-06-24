@@ -1,6 +1,8 @@
 # BMP decoder for LVGL
 
-**This repository is merged into the lvgl repository. See https://docs.lvgl.io/master/libs/bmp.html**
+**This repository is merged into the lvgl repository and archived. See https://docs.lvgl.io/master/details/libs/bmp.html**
+
+**This repository is merged into the lvgl repository and archived. See https://docs.lvgl.io/master/details/libs/lodepng.html**
 
 Allow the use of BMP images in LVGL. 
 This implementation uses [bmp-decoder](https://github.com/caj-johnson/bmp-decoder) library.
